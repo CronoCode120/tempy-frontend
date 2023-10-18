@@ -1,44 +1,65 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { screen } from "@testing-library/dom";
-import { render } from "@testing-library/react";
-import { App } from "./App.jsx";
-import userEvent from "@testing-library/user-event";
-import { DependenciesContext } from "./context/Dependencies.js";
-import { TemperatureServiceFake } from "./services/TemperatureServiceFake.js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import { screen } from "@testing-library/dom"
+import { cleanup, render } from "@testing-library/react"
+import { App } from "./App.jsx"
+import userEvent from "@testing-library/user-event"
+import { DependenciesContext } from "./context/Dependencies.js"
+import { TemperatureServiceFake } from "./services/TemperatureServiceFake.js"
+import { getTemperature } from "./lib/getTemperature.js"
+
+vi.mock("./lib/getTemperature.js", () => ({
+  getTemperature: vi.fn(({ setTemperature, setCurrentTemperature }) => {
+    setTemperature("24.4")
+    setCurrentTemperature(24.4)
+  }),
+}))
 
 describe("App", () => {
-  beforeEach(() => {
-    const temperatureService = new TemperatureServiceFake();
+  beforeEach(async () => {
+    const temperatureService = new TemperatureServiceFake()
 
-    const dependencies = { temperatureService };
+    const dependencies = { temperatureService }
 
     render(
       <DependenciesContext.Provider value={dependencies}>
         <App />
-      </DependenciesContext.Provider>,
-    );
-  });
+      </DependenciesContext.Provider>
+    )
+  })
+
+  afterEach(() => {
+    cleanup()
+  })
 
   it("loads the current temperature as an emoji", async () => {
-    const element = await screen.findByText("😌");
+    const element = await screen.findByText("😌")
 
-    expect(element).toBeInTheDocument();
-  });
+    expect(element).toBeInTheDocument()
+  })
 
   it("loads the current temperature as an an area label on the emoji", async () => {
-    const element = await screen.findByLabelText("Current weather is warm");
+    const element = await screen.findByLabelText("Current weather is warm")
 
-    expect(element).toBeInTheDocument();
-  });
+    expect(element).toBeInTheDocument()
+  })
 
   it("converts from celsius to kelvin the current weather", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup()
 
-    await user.selectOptions(screen.getByLabelText("To"), "Kelvin");
+    await user.selectOptions(screen.getByLabelText("To"), "Kelvin")
 
     const element = await screen.findByText(
-      (_, { textContent }) => textContent === "Conversion result: 297.5 K",
-    );
-    expect(element).toBeInTheDocument();
-  });
-});
+      (_, { textContent }) => textContent === "Conversion result: 297.5 K"
+    )
+    expect(element).toBeInTheDocument()
+  })
+
+  it('calls temperature service when button "Get Temperature" is clicked', async () => {
+    const user = userEvent.setup()
+
+    const btn = screen.getByText("Get Temperature")
+    await user.click(btn)
+
+    expect(getTemperature).toBeCalled()
+  })
+})

@@ -1,27 +1,32 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import { TemperatureUnit, toSymbol } from "./models/TemperatureUnit.js";
-import { SelectUnit } from "./components/SelectUnit.jsx";
-import { TemperatureInput } from "./components/TemperatureInput.jsx";
-import { convert } from "./models/Temperature.js";
-import { CurrentTemperature } from "./components/CurrentTemperature.jsx";
-import { useDependencies } from "./hooks/useDependencies.js";
+import { useEffect, useState } from "react"
+import "./App.css"
+import { TemperatureUnit, toSymbol } from "./models/TemperatureUnit.js"
+import { SelectUnit } from "./components/SelectUnit.jsx"
+import { TemperatureInput } from "./components/TemperatureInput.jsx"
+import { convert } from "./models/Temperature.js"
+import { CurrentTemperature } from "./components/CurrentTemperature.jsx"
+import { useDependencies } from "./hooks/useDependencies.js"
+import { getTemperature } from "./lib/getTemperature.js"
 
 export const App = () => {
-  const [currentTemperature, setCurrentTemperature] = useState();
-  const [temperature, setTemperature] = useState("");
-  const [fromUnit, setFromUnit] = useState(TemperatureUnit.CELSIUS);
-  const [toUnit, setToUnit] = useState(TemperatureUnit.CELSIUS);
-  const { temperatureService } = useDependencies();
+  const [currentTemperature, setCurrentTemperature] = useState()
+  const [temperature, setTemperature] = useState("")
+  const [fromUnit, setFromUnit] = useState(TemperatureUnit.CELSIUS)
+  const [toUnit, setToUnit] = useState(TemperatureUnit.CELSIUS)
+  const { temperatureService } = useDependencies()
 
-  const result = convert(parseFloat(temperature), fromUnit, toUnit);
+  const result = convert(parseFloat(temperature), fromUnit, toUnit)
+
+  const callGetTemperature = async () =>
+    await getTemperature({
+      setTemperature,
+      setCurrentTemperature,
+      temperatureService,
+    })
 
   useEffect(() => {
-    temperatureService.getTemperature().then((temperature) => {
-      setCurrentTemperature(temperature);
-      setTemperature(temperature.toString());
-    });
-  }, []);
+    callGetTemperature()
+  }, [])
 
   return (
     <main>
@@ -41,9 +46,12 @@ export const App = () => {
         />
         <TemperatureInput
           value={temperature}
-          onChange={(temperature) => setTemperature(temperature)}
+          onChange={temperature => setTemperature(temperature)}
           unit={fromUnit}
         />
+        <button type="button" onClick={callGetTemperature}>
+          Get Temperature
+        </button>
         <p className="result">
           <span>Conversion result: </span>
           <span>
@@ -53,5 +61,5 @@ export const App = () => {
         </p>
       </form>
     </main>
-  );
-};
+  )
+}
