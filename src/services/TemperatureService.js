@@ -1,21 +1,27 @@
 export class TemperatureService {
-  baseUrl = "http://localhost:3000";
+  baseUrl = "http://localhost:3000"
 
   constructor(fetch = (...args) => globalThis.fetch(...args)) {
-    this.fetch = fetch;
+    this.fetch = fetch
   }
 
-  async getTemperature(ip) {
-    const response = await this.fetch(`${this.baseUrl}/temperature`, { headers: {
-      "x-forwarded-for": ip
-    }});
+  async getTemperature(url) {
+    if (!url) throw Error("Url must be defined")
+    let response
+    if (url.includes("http://localhost:")) {
+      response = await this.fetch(`${this.baseUrl}/temperature`, {
+        headers: {
+          "x-forwarded-for": "1.178.255.255",
+        },
+      })
+    } else response = await this.fetch(`${url}/temperature`)
 
     if (!response.ok) {
-      throw new Error("Could not get temperature");
+      throw new Error("Could not get temperature")
     }
 
-    const data = await response.json();
+    const data = await response.json()
 
-    return data.temperature;
+    return data.temperature
   }
 }

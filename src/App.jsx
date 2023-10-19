@@ -13,6 +13,8 @@ export const App = () => {
   const [temperature, setTemperature] = useState("")
   const [fromUnit, setFromUnit] = useState(TemperatureUnit.CELSIUS)
   const [toUnit, setToUnit] = useState(TemperatureUnit.CELSIUS)
+
+  const [url, setUrl] = useState("")
   const { temperatureService } = useDependencies()
 
   const result = convert(parseFloat(temperature), fromUnit, toUnit)
@@ -22,12 +24,16 @@ export const App = () => {
       setTemperature,
       setCurrentTemperature,
       temperatureService,
+      url,
     })
 
   useEffect(() => {
-    callGetTemperature()
+    setUrl(window.location.origin)
   }, [])
 
+  useEffect(() => {
+    callGetTemperature()
+  }, [url])
   return (
     <main>
       <CurrentTemperature temperature={currentTemperature} />
