@@ -1,9 +1,12 @@
-import { render, screen, waitFor } from "@testing-library/react"
+import { render, screen, waitFor, act } from "@testing-library/react"
 import { App } from "./App"
+import React from "react"
+import { ReactDOM } from "react-dom/client"
 import { describe, expect, it, vi } from "vitest"
 import userEvent from "@testing-library/user-event"
 import { DependenciesContext } from "./context/Dependencies"
 import { TemperatureService } from "./services/TemperatureService"
+import { setLocalEnv } from "../setEnv/setLocalEnv.js"
 
 const fetchMock = vi.fn(async () => ({
   json: async () => ({ temperature: 10 }),
@@ -19,11 +22,14 @@ const expectedHeaders = {
 
 describe("Get Temperature button", () => {
   it("TemperatureService is called when button is clicked", async () => {
+    setLocalEnv()
     const temperatureService = new TemperatureService(fetchMock)
-    render(
-      <DependenciesContext.Provider value={{ temperatureService }}>
-        <App />
-      </DependenciesContext.Provider>
+    await act(async () =>
+      render(
+        <DependenciesContext.Provider value={{ temperatureService }}>
+          <App />
+        </DependenciesContext.Provider>
+      )
     )
     userEvent.setup()
     const btn = await screen.findByText("Get Temperature")

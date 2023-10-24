@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { screen } from "@testing-library/dom"
-import { cleanup, render } from "@testing-library/react"
+import { cleanup, render, screen, within } from "@testing-library/react"
 import { App } from "./App.jsx"
 import userEvent from "@testing-library/user-event"
 import { DependenciesContext } from "./context/Dependencies.js"
@@ -61,5 +60,16 @@ describe("App", () => {
     await user.click(btn)
 
     expect(getTemperature).toBeCalled()
+  })
+
+  it("renders a list of countries", () => {
+    const countryList = ["España", "Francia", "Portugal", "Italia"]
+
+    const list = screen.getByRole("list")
+    const countries = within(list).getAllByRole("listitem")
+
+    countries.forEach((country, idx) => {
+      expect(country.textContent).toContain(countryList[idx])
+    })
   })
 })
