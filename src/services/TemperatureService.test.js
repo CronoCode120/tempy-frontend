@@ -16,7 +16,7 @@ describe("TemperatureService", () => {
 
       const temperatureService = new TemperatureService(fetchMock)
 
-      const temperature = await temperatureService.getTemperature(url)
+      const temperature = await temperatureService.getTemperature(undefined)
 
       expect(temperature).toEqual(10)
       expect(fetchMock).toHaveBeenCalledWith(

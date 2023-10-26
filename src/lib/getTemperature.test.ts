@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { getTemperature } from "./getTemperature"
+import { getTemperature } from "./getTemperature.ts"
 
 const mockSetTemperature = vi.fn()
 const mockSetCurTemperature = vi.fn()
 const mockService = { getTemperature: vi.fn() }
 
 describe("getTemperature", () => {
-  beforeEach(() => vi.resetAllMocks())
+  beforeEach(() => vi.resetAllMocks() as any)
 
   it("calls service and updates state accordingly", async () => {
     vi.mocked(mockService.getTemperature).mockResolvedValueOnce(10)
@@ -14,26 +14,13 @@ describe("getTemperature", () => {
       setCurrentTemperature: mockSetCurTemperature,
       setTemperature: mockSetTemperature,
       temperatureService: mockService,
-      url: "http://localhost:5000",
+      ip: '::ip::'
     })
 
     expect(mockService.getTemperature).toHaveBeenCalledWith(
-      "http://localhost:5000"
+      "::ip::"
     )
     expect(mockSetCurTemperature).toBeCalled()
     expect(mockSetTemperature).toBeCalled()
-  })
-
-  it("returns if url is falsy", async () => {
-    await getTemperature({
-      setCurrentTemperature: mockSetCurTemperature,
-      setTemperature: mockSetTemperature,
-      temperatureService: mockService,
-      url: "",
-    })
-
-    expect(mockService.getTemperature).not.toBeCalled()
-    expect(mockSetCurTemperature).not.toBeCalled()
-    expect(mockSetTemperature).not.toBeCalled()
   })
 })

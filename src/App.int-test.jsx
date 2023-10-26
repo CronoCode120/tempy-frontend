@@ -1,7 +1,5 @@
 import { render, screen, waitFor, act } from "@testing-library/react"
 import { App } from "./App"
-import React from "react"
-import { ReactDOM } from "react-dom/client"
 import { describe, expect, it, vi } from "vitest"
 import userEvent from "@testing-library/user-event"
 import { DependenciesContext } from "./context/Dependencies"

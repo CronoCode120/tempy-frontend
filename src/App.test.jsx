@@ -1,17 +1,47 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest"
 import { cleanup, render, screen, within } from "@testing-library/react"
 import { App } from "./App.jsx"
 import userEvent from "@testing-library/user-event"
 import { DependenciesContext } from "./context/Dependencies.js"
 import { TemperatureServiceFake } from "./services/TemperatureServiceFake.js"
-import { getTemperature } from "./lib/getTemperature.js"
+import { getTemperature } from "./lib/getTemperature.ts"
+import { getCountries } from "./lib/getCountries.ts"
 
-vi.mock("./lib/getTemperature.js", () => ({
+vi.mock("./lib/getTemperature.ts", () => ({
   getTemperature: vi.fn(({ setTemperature, setCurrentTemperature }) => {
-    setTemperature("24.4")
+    if (setTemperature) setTemperature("24.4")
     setCurrentTemperature(24.4)
   }),
 }))
+
+vi.mock("./lib/getCountries.ts", () => ({
+  getCountries: vi.fn(({ setCountries }) => {
+    setCountries(countryList)
+  }),
+}))
+
+const countryList = [
+  {
+    name: "España",
+    ip: "103.202.235.255",
+  },
+  {
+    name: "Francia",
+    ip: "1.1.1.1",
+  },
+  {
+    name: "Portugal",
+    ip: "2.2.2.2",
+  },
+]
 
 describe("App", () => {
   beforeEach(async () => {
@@ -28,6 +58,7 @@ describe("App", () => {
 
   afterEach(() => {
     cleanup()
+    vi.clearAllMocks()
   })
 
   it("loads the current temperature as an emoji", async () => {
@@ -62,14 +93,20 @@ describe("App", () => {
     expect(getTemperature).toBeCalled()
   })
 
-  it("renders a list of countries", () => {
-    const countryList = ["España", "Francia", "Portugal", "Italia"]
+  describe("List of countries", () => {
+    it("renders a list of countries", async () => {
+      const list = screen.getByRole("list")
+      const countries = await vi.waitFor(() =>
+        within(list).getAllByRole("listitem")
+      )
 
-    const list = screen.getByRole("list")
-    const countries = within(list).getAllByRole("listitem")
+      countries.forEach((country, idx) => {
+        expect(country.textContent).toMatch(
+          `${countryList[idx].name} --> 24.4 ºC`
+        )
+      })
 
-    countries.forEach((country, idx) => {
-      expect(country.textContent).toContain(countryList[idx])
+      expect(getCountries).toBeCalled()
     })
   })
 })

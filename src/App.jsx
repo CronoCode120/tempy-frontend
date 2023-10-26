@@ -5,8 +5,10 @@ import { SelectUnit } from "./components/SelectUnit.jsx"
 import { TemperatureInput } from "./components/TemperatureInput.jsx"
 import { convert } from "./models/Temperature.js"
 import { CurrentTemperature } from "./components/CurrentTemperature.jsx"
+import CountriesList from "./components/CountriesList.tsx"
 import { useDependencies } from "./hooks/useDependencies.js"
-import { getTemperature } from "./lib/getTemperature.js"
+import { getTemperature } from "./lib/getTemperature.ts"
+import { getCountries } from "./lib/getCountries.ts"
 
 export const App = () => {
   const [currentTemperature, setCurrentTemperature] = useState()
@@ -14,7 +16,7 @@ export const App = () => {
   const [fromUnit, setFromUnit] = useState(TemperatureUnit.CELSIUS)
   const [toUnit, setToUnit] = useState(TemperatureUnit.CELSIUS)
 
-  const [url, setUrl] = useState("")
+  const [countries, setCountries] = useState([])
   const { temperatureService } = useDependencies()
 
   const result = convert(parseFloat(temperature), fromUnit, toUnit)
@@ -24,16 +26,18 @@ export const App = () => {
       setTemperature,
       setCurrentTemperature,
       temperatureService,
-      url,
+    })
+
+  const callGetCountries = async () =>
+    await getCountries({
+      setCountries,
     })
 
   useEffect(() => {
-    setUrl(window.location.origin)
+    callGetTemperature()
+    callGetCountries()
   }, [])
 
-  useEffect(() => {
-    callGetTemperature()
-  }, [url])
   return (
     <main>
       <CurrentTemperature temperature={currentTemperature} />
@@ -66,6 +70,11 @@ export const App = () => {
           </span>
         </p>
       </form>
+      <CountriesList
+        countryArray={countries}
+        getTemperature={getTemperature}
+        temperatureService={temperatureService}
+      />
     </main>
   )
 }
