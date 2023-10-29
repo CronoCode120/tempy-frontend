@@ -1,7 +1,8 @@
-import { NoAvailableDataError } from "../errors/NoAvailableDataError"
+import { NoAvailableDataError } from "../errors/NoAvailableDataError.ts"
 
 interface ICountriesService {
     fetch: () => {}
+    getCountries: () => Promise<any>
 }
 
 export class CountriesService implements ICountriesService {
@@ -17,7 +18,6 @@ export class CountriesService implements ICountriesService {
         let response
 
         if (this.environment === "local") {
-            console.log('local')
             response = await this.fetch(`${this.baseUrl}/countries`)
         }
 

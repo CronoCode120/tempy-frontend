@@ -26,4 +26,9 @@ export function getTemperature({
       setTemperature(temperature.toString())
     }
   })
+    .catch((err: Error) => {
+      console.error(err)
+      setCurrentTemperature(undefined)
+      if (setTemperature) setTemperature('')
+    })
 }

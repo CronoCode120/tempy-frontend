@@ -9,6 +9,7 @@ import CountriesList from "./components/CountriesList.tsx"
 import { useDependencies } from "./hooks/useDependencies.js"
 import { getTemperature } from "./lib/getTemperature.ts"
 import { getCountries } from "./lib/getCountries.ts"
+import CountryItem from "./components/CountryItem.tsx"
 
 export const App = () => {
   const [currentTemperature, setCurrentTemperature] = useState()
@@ -17,7 +18,7 @@ export const App = () => {
   const [toUnit, setToUnit] = useState(TemperatureUnit.CELSIUS)
 
   const [countries, setCountries] = useState([])
-  const { temperatureService } = useDependencies()
+  const { temperatureService, countriesService } = useDependencies()
 
   const result = convert(parseFloat(temperature), fromUnit, toUnit)
 
@@ -31,6 +32,7 @@ export const App = () => {
   const callGetCountries = async () =>
     await getCountries({
       setCountries,
+      countriesService,
     })
 
   useEffect(() => {
@@ -71,6 +73,7 @@ export const App = () => {
         </p>
       </form>
       <CountriesList
+        CountryItem={CountryItem}
         countryArray={countries}
         getTemperature={getTemperature}
         temperatureService={temperatureService}

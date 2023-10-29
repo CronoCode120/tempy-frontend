@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 import { TemperatureService } from "./TemperatureService.js"
-import { setLocalEnv } from "../../setEnv/setLocalEnv.js"
+import { setLocalEnv } from "../setEnv/setLocalEnv.js"
 
 const url = "http://localhost:5000"
 

@@ -10,6 +10,11 @@ export async function getCountries({
     setCountries,
     countriesService
 }: getCountriesProps) {
-    const countryList = await countriesService.getCountries()
-    setCountries(countryList)
+    try {
+        const countryList = await countriesService.getCountries()
+        setCountries(countryList)
+    } catch (error) {
+        setCountries([])
+        console.error(error);
+    }
 }

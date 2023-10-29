@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { getTemperatureProps } from "../lib/getTemperature.ts"
 
-interface CountryItemProps {
+export interface CountryItemProps {
   getTemperature: ({
     setTemperature,
     setCurrentTemperature,
@@ -21,7 +21,6 @@ const CountryItem = ({
 }: CountryItemProps) => {
   const [currentTemperature, setCurrentTemperature] = useState<number>()
 
-  console.log(setCurrentTemperature)
   const callGetTemperature = async () =>
     await getTemperature({
       setCurrentTemperature,

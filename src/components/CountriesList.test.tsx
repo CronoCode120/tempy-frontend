@@ -1,13 +1,8 @@
 import React from "react"
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
-import { cleanup, render, screen, act } from "@testing-library/react"
+import { afterEach, describe, expect, it, vi } from "vitest"
+import { cleanup, render, screen } from "@testing-library/react"
 import "@testing-library/jest-dom"
 import CountriesList from "./CountriesList.tsx"
-import CountryItem from "./CountryItem.tsx"
-
-vi.mock("./CountryItem.tsx", () => ({
-  default: vi.fn(() => <li>::CountryItem::</li>),
-}))
 
 const countryArray = [
   {
@@ -28,6 +23,7 @@ const props = {
   countryArray,
   temperatureService: "::mockService::",
   getTemperature: vi.fn(),
+  CountryItem: vi.fn(() => <li>::CountryItem::</li>),
 }
 
 describe("CountriesList", () => {
@@ -44,7 +40,7 @@ describe("CountriesList", () => {
     })
 
     countryArray.forEach((country, idx) => {
-      expect(CountryItem).toHaveBeenNthCalledWith(
+      expect(props.CountryItem).toHaveBeenNthCalledWith(
         idx + 1,
         {
           country: country.name,
@@ -61,6 +57,7 @@ describe("CountriesList", () => {
     render(
       <CountriesList
         countryArray={[]}
+        CountryItem={props.CountryItem}
         temperatureService={props.temperatureService}
         getTemperature={props.getTemperature}
       />

@@ -1,17 +1,10 @@
-import {
-  afterEach,
-  beforeAll,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest"
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { cleanup, render, screen, within } from "@testing-library/react"
 import { App } from "./App.jsx"
 import userEvent from "@testing-library/user-event"
 import { DependenciesContext } from "./context/Dependencies.js"
 import { TemperatureServiceFake } from "./services/TemperatureServiceFake.js"
+import { CountriesServiceFake } from "./services/CountriesServiceFake.ts"
 import { getTemperature } from "./lib/getTemperature.ts"
 import { getCountries } from "./lib/getCountries.ts"
 
@@ -46,8 +39,9 @@ const countryList = [
 describe("App", () => {
   beforeEach(async () => {
     const temperatureService = new TemperatureServiceFake()
+    const countriesService = new CountriesServiceFake()
 
-    const dependencies = { temperatureService }
+    const dependencies = { temperatureService, countriesService }
 
     render(
       <DependenciesContext.Provider value={dependencies}>

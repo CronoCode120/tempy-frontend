@@ -1,6 +1,6 @@
 import React from "react"
 import { getTemperatureType } from "../lib/getTemperature"
-import CountryItem from "./CountryItem"
+import { CountryItemProps } from "./CountryItem"
 
 export type CountryData = {
   name: string
@@ -11,12 +11,14 @@ interface CountriesListProps {
   countryArray: CountryData[]
   temperatureService: any
   getTemperature: getTemperatureType
+  CountryItem: React.FC<CountryItemProps>
 }
 
 const CountriesList = ({
   countryArray,
   temperatureService,
   getTemperature,
+  CountryItem,
 }: CountriesListProps) => {
   return (
     <ul>
